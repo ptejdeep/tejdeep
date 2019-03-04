@@ -1,0 +1,361 @@
+insert into [BPF].[FACT_ETLProcessAuditLog] 
+([ETLProcessName]
+      ,[ETLProcessStartDateTime]
+      ,[DataSourceName]
+      ,[DataTargetName]
+   ,[ETLProcessValidationStatus]
+     
+      ,[ETLProcessRecordCreatedDateTime]
+      ,[ETLProcessRecordLastModifiedDateTime]
+      ,[ETLProcessRelatedRScript])
+values
+('Load_FACT_Daily_Actuals_Syndication',getdate(),
+'SDS Syndication Cube',
+'FACT_Daily_Actuals_Syndication','In Process', (select min([ETLProcessStartDateTime]) from [BPF].[FACT_ETLProcessAuditLog] 
+where [ETLProcessName] = 'Load_FACT_Daily_Actuals_Syndication') ,getdate(),'Source_Data_Transformation_Mappings')
+
+
+
+
+
+select CONCAT(cast(cast(cast(max([ReportingDateKey]) as varchar(8)) as date) as varchar(10)),'T00:00:00') as maxdate,
+	   CONCAT(cast(dateadd(Day,-1,cast(cast(max([ReportingDateKey]) as varchar(8)) as date)) as varchar(10)),'T00:00:00') as startdate 
+from [PUB].[FACT_SyndicationPerformance_Daily_Global]
+
+
+/****** 
+Script for transforming Syndication Actuals from the Syndication production cube into
+tables in SQL Server for reporting by Bing Forecasting Teams.
+
+Author:  Janet Guerrero, Slalom Consulting
+Create date:  April 12, 2018
+Last modified: May 29, 2018
+
+******/
+Use [Prod_Network_Forecasting] 
+ GO
+
+/*----------Create temporary table---------------------*/
+CREATE  TABLE [BPF].[SyndicationActualsTemp] 
+(  [Date]                                                                               Date NULL
+  ,[FraudTypeStatusName]           varchar(100) NULL
+  ,[PublisherOwnerName]                             varchar(100) NULL
+  ,[PublisherCategory]                    varchar(50) NULL
+  ,[MarketplaceClassification] varchar(50) NULL
+  ,[PublisherName]                                          varchar(100) NULL
+  ,[AdDemandSource]                                     varchar(50) NULL
+  ,[BusinessModel]                                          varchar(50) NULL
+  ,[MarketName]                                                              varchar(50) NULL
+  ,[DeviceType]                                                  varchar(50) NULL
+  ,[Revenue]                                                       float NULL
+  ,[Volume]                                                                         bigint NULL
+  ,[Impressions]                                 bigint NULL
+  ,[Clicks]                                                                              bigint NULL
+  ,[BiddedVolume]                                           bigint NULL
+  ,[PreDiscountRevenue(USD)] float NULL) ON [FACT_Daily_Actuals_Syndication ];
+
+
+ /*--------Transform output from cube and insert into temp table---------------*/
+
+INSERT INTO [BPF].[SyndicationActualsTemp]  
+  
+SELECT   a.[Date]
+                                ,a.[FraudTypeStatusName]                                                                          AS [FraudTypeStatusName]
+                                ,a.[PublisherOwnerName]                                                                           AS [PublisherOwnerName]
+                                ,CASE WHEN a.[PublisherOwnerName]='Yahoo' AND a.[MarketplaceClassification] LIKE 'O&O%' THEN 'O&O' 
+                                 ELSE a.[PublisherCategory]  END                                              AS [PublisherCategory]
+                                ,a.[MarketplaceClassification]                                                    AS [MarketplaceClassification]
+                                ,a.[PublisherName]                                                                                                         AS [PublisherName]
+                                ,a.[AdDemandSource]                                                                                   AS [AdDemandSource]  
+                                ,a.[BusinessModel]                                                                                                         AS [BusinessModel]
+                                ,a.[Country]                                                       AS MarketName
+                                ,a.[Device]                                                                                                          AS [DeviceType]
+                                ,a.[GrossRevenue(CD)]                                                                                  AS Revenue
+                                ,a.[SearchResultPageViews]                                                        AS Volume
+                                ,a.[Impressions]                                                                                                AS [Impressions]
+                                ,a.[Clicks]                                                                                                                                             AS [Clicks]
+                                ,a.[BiddedSearchResultPageViews]                          AS [BiddedVolume]
+								,a.[PreDiscountRevenue(USD)]   AS [PreDiscountRevenue(USD)]
+                                FROM [Prod_Network_Forecasting].[STG].[FACT_Daily_Actuals_Syndication] AS a
+                   WHERE a.[PublisherOwnerName] IN ('Microsoft', 'Unspecified', 'Yahoo')
+                                                
+                                                
+                                                 
+                                                
+ 
+/*---------Stack all the metrics and insert into reporting table----------------------*/
+
+INSERT INTO [STG].[FACT_Daily_Actuals_SyndicationPivot]   
+
+SELECT  [Date]   
+                   ,'SDS Syndication Cube' AS [DataSource]
+                   ,[FraudTypeStatusName]                                                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]   
+                   ,[MarketplaceClassification]    
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'Revenue' AS [MetricName]    
+                   ,[Revenue] AS MetricValue
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+UNION ALL
+SELECT  [Date]   
+                   ,'SDS Syndication Cube' AS [DataSource]                            
+                   ,[FraudTypeStatusName]                                                                                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]                   
+                   ,[MarketplaceClassification]
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'Volume' AS [MetricName]      
+                   ,[Volume] AS MetricValue
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+                                
+UNION ALL
+SELECT  [Date]                   
+                   ,'SDS Syndication Cube' AS [DataSource]
+                   ,[FraudTypeStatusName]                                                                                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]   
+                   ,[MarketplaceClassification]    
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'Impressions' AS [MetricName]             
+                   ,[Impressions] AS MetricValue 
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+                   UNION ALL
+SELECT  [Date]                                                   
+                   ,'SDS Syndication Cube' AS [DataSource]            
+                   ,[FraudTypeStatusName]                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]                   
+                   ,[MarketplaceClassification]
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'Clicks' AS [MetricName]          
+                   ,[Clicks] AS MetricValue                             
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+UNION ALL
+SELECT  [Date]                                   
+                   ,'SDS Syndication Cube' AS [DataSource]
+                   ,[FraudTypeStatusName]                                                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]                   
+                   ,[MarketplaceClassification]
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'Bidded Volume' AS [MetricName]      
+                   ,[BiddedVolume] AS MetricValue          
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+UNION ALL
+SELECT  [Date]                                   
+                   ,'SDS Syndication Cube' AS [DataSource]
+                   ,[FraudTypeStatusName]                                                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]                   
+                   ,[MarketplaceClassification]
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'PreDiscountRevenue(USD)' AS [MetricName]      
+                   ,[PreDiscountRevenue(USD)] AS MetricValue          
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+
+;
+
+
+DROP TABLE [BPF].[SyndicationActualsTemp] ;
+---END
+
+
+
+
+/****** 
+Script for transforming Syndication Actuals from the Syndication production cube into
+tables in SQL Server for reporting by Bing Forecasting Teams.
+
+Author:  Janet Guerrero, Slalom Consulting
+Create date:  April 12, 2018
+Last modified: May 29, 2018
+
+******/
+Use [Prod_Network_Forecasting] 
+ GO
+
+/*----------Create temporary table---------------------*/
+CREATE  TABLE [BPF].[SyndicationActualsTemp] 
+(  [Date]                                                                               Date NULL
+  ,[FraudTypeStatusName]           varchar(100) NULL
+  ,[PublisherOwnerName]                             varchar(100) NULL
+  ,[PublisherCategory]                    varchar(50) NULL
+  ,[MarketplaceClassification] varchar(50) NULL
+  ,[PublisherName]                                          varchar(100) NULL
+  ,[AdDemandSource]                                     varchar(50) NULL
+  ,[BusinessModel]                                          varchar(50) NULL
+  ,[MarketName]                                                              varchar(50) NULL
+  ,[DeviceType]                                                  varchar(50) NULL
+  ,[Revenue]                                                       float NULL
+  ,[Volume]                                                                         bigint NULL
+  ,[Impressions]                                 bigint NULL
+  ,[Clicks]                                                                              bigint NULL
+  ,[BiddedVolume]                                           bigint NULL
+  ,[PreDiscountRevenue(USD)] float NULL) ON [FACT_Daily_Actuals_Syndication ];
+
+
+ /*--------Transform output from cube and insert into temp table---------------*/
+
+INSERT INTO [BPF].[SyndicationActualsTemp]  
+  
+SELECT   a.[Date]
+                                ,a.[FraudTypeStatusName]                                                                          AS [FraudTypeStatusName]
+                                ,a.[PublisherOwnerName]                                                                           AS [PublisherOwnerName]
+                                ,CASE WHEN a.[PublisherOwnerName]='Yahoo' AND a.[MarketplaceClassification] LIKE 'O&O%' THEN 'O&O' 
+                                 ELSE a.[PublisherCategory]  END                                              AS [PublisherCategory]
+                                ,a.[MarketplaceClassification]                                                    AS [MarketplaceClassification]
+                                ,a.[PublisherName]                                                                                                         AS [PublisherName]
+                                ,a.[AdDemandSource]                                                                                   AS [AdDemandSource]  
+                                ,a.[BusinessModel]                                                                                                         AS [BusinessModel]
+                                ,a.[Country]                                                       AS MarketName
+                                ,a.[Device]                                                                                                          AS [DeviceType]
+                                ,a.[GrossRevenue(CD)]                                                                                  AS Revenue
+                                ,a.[SearchResultPageViews]                                                        AS Volume
+                                ,a.[Impressions]                                                                                                AS [Impressions]
+                                ,a.[Clicks]                                                                                                                                             AS [Clicks]
+                                ,a.[BiddedSearchResultPageViews]                          AS [BiddedVolume]
+								,a.[PreDiscountRevenue(USD)]   AS [PreDiscountRevenue(USD)]
+                                FROM [Prod_Network_Forecasting].[STG].[FACT_Daily_Actuals_Syndication] AS a
+                   WHERE a.[PublisherOwnerName] IN ('Microsoft', 'Unspecified', 'Yahoo')
+                                                
+                                                
+                                                 
+                                                
+ 
+/*---------Stack all the metrics and insert into reporting table----------------------*/
+
+INSERT INTO [STG].[FACT_Daily_Actuals_SyndicationPivot]   
+
+SELECT  [Date]   
+                   ,'SDS Syndication Cube' AS [DataSource]
+                   ,[FraudTypeStatusName]                                                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]   
+                   ,[MarketplaceClassification]    
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'Revenue' AS [MetricName]    
+                   ,[Revenue] AS MetricValue
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+UNION ALL
+SELECT  [Date]   
+                   ,'SDS Syndication Cube' AS [DataSource]                            
+                   ,[FraudTypeStatusName]                                                                                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]                   
+                   ,[MarketplaceClassification]
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'Volume' AS [MetricName]      
+                   ,[Volume] AS MetricValue
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+                                
+UNION ALL
+SELECT  [Date]                   
+                   ,'SDS Syndication Cube' AS [DataSource]
+                   ,[FraudTypeStatusName]                                                                                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]   
+                   ,[MarketplaceClassification]    
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'Impressions' AS [MetricName]             
+                   ,[Impressions] AS MetricValue 
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+                   UNION ALL
+SELECT  [Date]                                                   
+                   ,'SDS Syndication Cube' AS [DataSource]            
+                   ,[FraudTypeStatusName]                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]                   
+                   ,[MarketplaceClassification]
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'Clicks' AS [MetricName]          
+                   ,[Clicks] AS MetricValue                             
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+UNION ALL
+SELECT  [Date]                                   
+                   ,'SDS Syndication Cube' AS [DataSource]
+                   ,[FraudTypeStatusName]                                                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]                   
+                   ,[MarketplaceClassification]
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'Bidded Volume' AS [MetricName]      
+                   ,[BiddedVolume] AS MetricValue          
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+UNION ALL
+SELECT  [Date]                                   
+                   ,'SDS Syndication Cube' AS [DataSource]
+                   ,[FraudTypeStatusName]                                                          
+                   ,[PublisherOwnerName]            
+                  ,[PublisherCategory]                   
+                   ,[MarketplaceClassification]
+                   ,[PublisherName]                         
+                   ,[AdDemandSource]                                    
+                   ,[BusinessModel]                                         
+                   ,[MarketName]                                                             
+                   ,[DeviceType]                 
+                   ,'Actual' AS [MetricType]           
+                   ,'PreDiscountRevenue(USD)' AS [MetricName]      
+                   ,[PreDiscountRevenue(USD)] AS MetricValue          
+FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]
+
+;
+
+
+DROP TABLE [BPF].[SyndicationActualsTemp] ;
+---END

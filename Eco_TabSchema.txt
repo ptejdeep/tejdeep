@@ -1,0 +1,115 @@
+CREATE TABLE [eco].[DimGeography](
+	[GeographyKey] [int] IDENTITY(1,1) NOT NULL,
+	[Country] [nvarchar](3) NOT NULL,
+	[RegionName] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_DimGeography_GeographyKey] PRIMARY KEY CLUSTERED([GeographyKey] asc)
+ )
+ go
+CREATE TABLE [eco].[Dim_DistributionMedium](
+	[AdDistributionMediumKey] [int] NOT NULL,
+	[AdDistributionMedium] [nvarchar](3) NOT NULL,
+ CONSTRAINT [PK_Dim_DistributionMediumKey] PRIMARY KEY CLUSTERED([AdDistributionMediumKey] asc)
+ )go
+CREATE TABLE [eco].[Dim_Advertiser](
+	[AdvertiserKey] [int] NOT NULL,
+	[AdveriserID] [nvarchar](200) NOT NULL,
+ CONSTRAINT [PK_Dim_AdvertiserKey] PRIMARY KEY CLUSTERED([AdvertiserKey] asc)
+ )
+ go
+CREATE TABLE [eco].[Dim_AdvertiserAccount](
+	[AdvertiserAccountKey] [int] NOT NULL,
+	[AdveriserAccountID] [nvarchar](200) NOT NULL,
+	[AdveriserAccountName] [nvarchar](200) NOT NULL,
+	[vericalKey] [int] NOT NULL,
+ CONSTRAINT [PK_Dim_AdvertiserAccountKey] PRIMARY KEY CLUSTERED([AdvertiserAccountKey] asc),
+ CONSTRAINT [FK_VerticalKey] FOREIGN KEY ([vericalKey])
+ REFERENCES [eco].[Dim_AdvertiserAccountDemandVerical]([verticalKey])
+ )
+ go
+CREATE TABLE [eco].[Dim_ToolProvider](
+	[ToolProviderKey] [int] NOT NULL,
+	[ToolProviderName] [nvarchar](200) NOT NULL,
+ CONSTRAINT [PK_Dim_ToolProviderKey] PRIMARY KEY CLUSTERED([ToolProviderKey] asc)
+)
+ go
+CREATE TABLE [eco].[Dim_AdDisplayType](
+	[AdDisplayTypeKey] [int] NOT NULL,
+	[AdDisplayTypeId] [nvarchar](200) NOT NULL,
+ CONSTRAINT [PK_Dim_AdDisplayTypeKey] PRIMARY KEY CLUSTERED([AdDisplayTypeKey] asc)
+)go
+CREATE TABLE [eco].[Dim_Reconciliation](
+	[ReconciliationKey] [int] NOT NULL,
+	[ReconciliationFlag] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Dim_ReconciliationKey] PRIMARY KEY CLUSTERED([ReconciliationKey] asc)
+)go
+CREATE TABLE [eco].[Dim_PagePosition](
+	[PagePositionKey] [int] NOT NULL,
+	[PagePosition] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Dim_PagePositionKey] PRIMARY KEY CLUSTERED([PagePositionKey] asc)
+)go
+CREATE TABLE [eco].[Dim_AdvertiserAccountDemandVerical](
+	[VerticalKey] [int] NOT NULL,
+	[AdvertiserAccountDemandVertical] [nvarchar](50) NOT NULL,
+  CONSTRAINT [PK_Dim_VerticalKey] PRIMARY KEY CLUSTERED([VerticalKey] asc))
+ go
+CREATE TABLE [eco].[Dim_Date](
+	[DateKey] [int] NOT NULL,
+	[MonthStartDate] [date] NOT NULL,
+	[MonthName] [nvarchar](50) NOT NULL,
+	[FiscalYear] [nvarchar](50) NOT NULL,
+	[CalenderYear] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_Dim_DateKey] PRIMARY KEY CLUSTERED([DateKey] asc))go
+CREATE TABLE [eco].[Fact_ToolProviderMonthly](
+[GeographyKey] [int] NOT NULL,
+[AdDistributionMediumKey] [int] NOT NULL,
+[AdvertiserKey] [int] NOT NULL,
+[AdvertiserAccountKey] [int] NOT NULL,
+[ToolProviderKey] [int] NOT NULL,
+[AdDisplayTypeKey] [int] NOT NULL,
+[ReconciliationKey] [int] NOT NULL,
+[PagePositionKey] [int] NOT NULL,
+[DateKey] [int] NOT NULL)
+go
+
+ALTER TABLE [eco].[Fact_ToolProviderMonthly] 
+ADD  CONSTRAINT [FK_GeographyKey] FOREIGN KEY([GeographyKey])
+REFERENCES [eco].[DimGeography] ([GeographyKey])
+go
+
+ALTER TABLE [eco].[Fact_ToolProviderMonthly] 
+ADD  CONSTRAINT [FK_AdDistributionMediumKey] FOREIGN KEY([AdDistributionMediumKey])
+REFERENCES [eco].[Dim_DistributionMedium] ([AdDistributionMediumKey])
+go
+
+ALTER TABLE [eco].[Fact_ToolProviderMonthly] 
+ADD  CONSTRAINT [FK_AdvertiserKey] FOREIGN KEY([AdvertiserKey])
+REFERENCES [eco].[Dim_Advertiser] ([AdvertiserKey])
+go
+
+ALTER TABLE [eco].[Fact_ToolProviderMonthly] 
+ADD  CONSTRAINT [FK_AdvertiserAccountKey] FOREIGN KEY([AdvertiserAccountKey])
+REFERENCES [eco].[Dim_AdvertiserAccount] ([AdvertiserAccountKey])
+go
+
+ALTER TABLE [eco].[Fact_ToolProviderMonthly] 
+ADD  CONSTRAINT [FK_ToolProviderKey] FOREIGN KEY([ToolProviderKey])
+REFERENCES [eco].[Dim_ToolProvider] ([ToolProviderKey])
+go
+ALTER TABLE [eco].[Fact_ToolProviderMonthly] 
+ADD  CONSTRAINT [FK_AdDisplayTypeKey] FOREIGN KEY([AdDisplayTypeKey])
+REFERENCES [eco].[Dim_AdDisplayType] ([AdDisplayTypeKey])
+go
+ALTER TABLE [eco].[Fact_ToolProviderMonthly] 
+ADD  CONSTRAINT [FK_ReconciliationKey] FOREIGN KEY([ReconciliationKey])
+REFERENCES [eco].[Dim_Reconciliation] ([ReconciliationKey])
+go
+ALTER TABLE [eco].[Fact_ToolProviderMonthly] 
+ADD  CONSTRAINT [FK_PagePositionKey] FOREIGN KEY([PagePositionKey])
+REFERENCES [eco].[Dim_PagePosition] ([PagePositionKey])
+go
+ALTER TABLE [eco].[Fact_ToolProviderMonthly] 
+ADD  CONSTRAINT [FK_DateKey] FOREIGN KEY([DateKey])
+REFERENCES [eco].[Dim_Date] ([DateKey])
+go
+
+

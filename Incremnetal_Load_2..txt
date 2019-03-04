@@ -1,0 +1,127 @@
+insert into [BPF].[FACT_ETLProcessAuditLog] 
+(      [ETLProcessName]
+      ,[ETLProcessStartDateTime]
+      ,[DataSourceName]
+      ,[DataTargetName]
+      ,[ETLProcessValidationStatus]
+      ,[ETLProcessRecordCreatedDateTime]
+      ,[ETLProcessRecordLastModifiedDateTime]
+      ,[ETLProcessRelatedRScript])
+values
+('Load_FACT_Daily_Actuals_Syndication'
+ ,getdate()
+ ,'SDS Syndication Cube'
+ ,'FACT_Daily_Actuals_Syndication'
+ ,'In Process'
+ ,(select min([ETLProcessStartDateTime]) from [BPF].[FACT_ETLProcessAuditLog] where [ETLProcessName] = 'Load_FACT_Daily_Actuals_Syndication') 
+ ,getdate()
+ ,'Source_Data_Transformation_Mappings')
+
+////////////////
+MERGE [Prod_Network_Forecasting].[BPF].[FACT_Daily_Actuals_Syndication] AS target
+USING
+(
+SELECT   
+  c.DataSourceKey,
+  k.[FraudTypeStatusKey],
+  d.[PublisherKey],
+  e.[MarketPlaceClassificationKey],
+  f.[AdDemandSourceKey],
+  g.[BusinessModelKey],
+  h.MarketKey,
+  i.DeviceTypeKey,
+  j.MetricKey,
+  b.DateKey,
+  cast(SUM(ISNULL(a.[MetricValue],0)) as float) AS [MetricValue]
+  
+  FROM [Prod_Network_Forecasting].[STG].[FACT_Daily_Actuals_SyndicationPivot] as a
+  LEFT JOIN [Prod_Network_Forecasting].[BPF].[DIM_Date] as b
+  ON a.[Date] = b.[Date]
+  LEFT JOIN [Prod_Network_Forecasting].[BPF].[DIM_DataSource] as c
+  ON a.[DataSource]  = c.[DataSourceName]
+  LEFT JOIN [Prod_Network_Forecasting].[BPF].[DIM_Publisher] as d
+  ON (
+     a.[PublisherName] = d.[PublisherName] 
+     AND a.[PublisherOwnerName] = d.[PublisherOwnerName] 
+     AND a.[PublisherCategory] = d.[PublisherCategory]
+       )
+  LEFT JOIN [Prod_Network_Forecasting].[BPF].[DIM_MarketPlaceClassification] as e
+  ON a.[MarketplaceClassification] = e.[MarketPlaceClassificationName]
+  LEFT JOIN [Prod_Network_Forecasting].[BPF].[DIM_AdDemandSource] as f
+  ON a.[AdDemandSource] = f.[AdDemandSource]
+  LEFT JOIN [Prod_Network_Forecasting].[BPF].[DIM_BusinessModel] as g
+  ON a.[BusinessModel] = g.[BusinessModel]
+  LEFT JOIN [Prod_Network_Forecasting].[BPF].[DIM_Market] as h
+  ON a.[MarketName] = h.[MarketName]
+  LEFT JOIN [Prod_Network_Forecasting].[BPF].[DIM_Device] as i
+  ON a.[DeviceType] = i.[DeviceTypeName]
+  LEFT JOIN [Prod_Network_Forecasting].[BPF].[DIM_Metric] as j
+  ON a.[MetricType] = j.[MetricType] AND a.[MetricName] = j.[MetricName]
+  LEFT JOIN [Prod_Network_Forecasting].[BPF].[DIM_FraudTypeStatus] as k
+  ON a.[FraudTypeStatusName] = k.[FraudTypeStatusName]
+
+group by
+  c.DataSourceKey,
+  k.[FraudTypeStatusKey],
+  d.[PublisherKey],
+  e.[MarketPlaceClassificationKey],
+  f.[AdDemandSourceKey],
+  g.[BusinessModelKey],
+  h.MarketKey,
+  i.DeviceTypeKey,
+  j.MetricKey,
+  b.DateKey
+
+                       
+) as source
+
+ON   target.[DataSourceKey] = source.[DataSourceKey]
+	 and target.[FraudTypeStatusKey] = source.[FraudTypeStatusKey]
+     and target.[PublisherKey] = source.[PublisherKey]
+     and target.[MarketPlaceClassificationKey] = source.[MarketPlaceClassificationKey]
+     and target.[AdDemandSourceKey] = source.[AdDemandSourceKey] 
+     and target.[FinancialBusinessModelKey] = source.[BusinessModelKey]
+     and target.[Marketkey] = source.[Marketkey]
+     and target.[DeviceTypeKey] = source.[DeviceTypeKey]
+     and target.[MetricKey] = source.[MetricKey]
+     and target.[DateKey] = source.[DateKey]
+WHEN MATCHED and source.[MetricValue] != target.[MetricValue] 
+THEN
+UPDATE SET target.[MetricValue] = source.[MetricValue]
+, target.[RecordModifiedDateTime] = getdate()
+
+WHEN NOT MATCHED BY TARGET
+  THEN
+    INSERT 
+      (
+        [DataSourceKey]
+       ,[FraudTypeStatusKey]
+       ,[PublisherKey]
+      ,[MarketPlaceClassificationKey]
+      ,[AdDemandSourceKey]
+      ,[FinancialBusinessModelKey]
+      ,[Marketkey]
+      ,[DeviceTypeKey]
+      ,[MetricKey]
+      ,[DateKey]
+      ,[MetricValue]
+      ,[RecordCreatedDateTime]
+      ,[RecordModifiedDateTime]
+      )
+    VALUES
+      ( 
+          source.[DataSourceKey]
+          ,source.[FraudTypeStatusKey]
+      ,source.[PublisherKey]
+      ,source.[MarketPlaceClassificationKey]
+      ,source.[AdDemandSourceKey]
+      ,source.[BusinessModelKey]
+      ,source.[Marketkey]
+      ,source.[DeviceTypeKey]
+      ,source.[MetricKey]
+      ,source.[DateKey]
+      ,source.[MetricValue]
+      ,getdate()
+      ,getdate()
+  
+      );
