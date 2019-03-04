@@ -1,0 +1,1086 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="4/26/2018 12:37:44 AM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="SABINGDEVHYP192"
+  DTS:CreatorName="REDMOND\v-sredan"
+  DTS:DTSID="{F1C08D91-1A89-4370-B44B-A24517BECBB6}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="13.0.2165.0"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="Load_STG_Actuals_Syndication"
+  DTS:PackageType="5"
+  DTS:VersionBuild="34"
+  DTS:VersionGUID="{87D12897-1DB3-4665-9EDD-6A6F33C5279F}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[172.16.132.39.RPT_Repository]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{7C8B82CC-ED17-4152-B32A-47B59C1BC4AE}"
+      DTS:ObjectName="172.16.132.39.RPT_Repository">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=172.16.132.39;Initial Catalog=RPT_Repository;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[172.16.132.39\tabular.SyndicationPerformanceDailyGlobal]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{82AD2B10-7987-483C-9E85-F2EC0C800A8E}"
+      DTS:ObjectName="172.16.132.39\tabular.SyndicationPerformanceDailyGlobal">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=172.16.132.39\tabular;Initial Catalog=SyndicationPerformanceDailyGlobal;Provider=MSOLAP.7;Integrated Security=SSPI;format=tabular;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[172.16.132.45.Prod_Network_Forecasting]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{96A8CA9F-0274-4D1D-83B0-B6347737CEB1}"
+      DTS:ObjectName="172.16.132.45.Prod_Network_Forecasting">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=172.16.132.45;Initial Catalog=Prod_Network_Forecasting;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{ECD14534-129B-45E8-A6B9-0BFB070A1BAD}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="EndDate">
+      <DTS:VariableValue
+        DTS:DataType="8">2018-10-28T00:00:00</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{520CFD63-3EA1-48AA-8C9E-5792E4E791FA}"
+      DTS:EvaluateAsExpression="True"
+      DTS:Expression="&quot;SELECT  { [Measures].[Clicks] ,[Measures].[Impressions] ,[Measures].[Gross Revenue (CD)],[Measures].[Search Result Page Views],[Measures].[Bidded Search Result Page Views], [Measures].[Pre Discount Revenue (USD)]} ON COLUMNS  , NON EMPTY( [Date].[Date].Children *[Fraud Type Status].[Fraud Type Status Name].Children *[Publisher].[Publisher Owner Name].Children *[Publisher].[Publisher Category].Children *[Publisher].[Publisher Name].Children *[Ad Demand Source].[Ad Demand Source].Children *[Ad Unit].[Financial Business Model].Children *[Device].[Device].Children *[Marketplace Classification].[Marketplace Classification].Children *[Geography].[Country].Children ) ON ROWS FROM (SELECT ({ [Date].[Date].&amp;[&quot;+@[User::StartDate]+&quot;]:[Date].[Date].&amp;[&quot;+ @[User::EndDate] +&quot;] }) ON COLUMNS FROM [Model]);&quot;"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="Query">
+      <DTS:VariableValue
+        DTS:DataType="8">SELECT  { [Measures].[Clicks] ,[Measures].[Impressions] ,[Measures].[Gross Revenue (CD)],[Measures].[Search Result Page Views],[Measures].[Bidded Search Result Page Views], [Measures].[Pre Discount Revenue (USD)]} ON COLUMNS  , NON EMPTY( [Date].[Date].Children *[Fraud Type Status].[Fraud Type Status Name].Children *[Publisher].[Publisher Owner Name].Children *[Publisher].[Publisher Category].Children *[Publisher].[Publisher Name].Children *[Ad Demand Source].[Ad Demand Source].Children *[Ad Unit].[Financial Business Model].Children *[Device].[Device].Children *[Marketplace Classification].[Marketplace Classification].Children *[Geography].[Country].Children ) ON ROWS FROM (SELECT ({ [Date].[Date].&amp;[2018-10-09T00:00:00]:[Date].[Date].&amp;[2018-10-28T00:00:00] }) ON COLUMNS FROM [Model]);</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{89323BC0-9890-4F13-B154-4DD12215D51D}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="StartDate">
+      <DTS:VariableValue
+        DTS:DataType="8">2018-10-09T00:00:00</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Execute SQL Task"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{CB5B1A5F-44DD-41CB-A014-57E765D59B0D}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Execute SQL Task"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2014; © 2014 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{96A8CA9F-0274-4D1D-83B0-B6347737CEB1}"
+          SQLTask:SqlStatementSource="/****** &#xA;Script for transforming Syndication Actuals from the Syndication production cube into&#xA;tables in SQL Server for reporting by Bing Forecasting Teams.&#xA;&#xA;Author:  Janet Guerrero, Slalom Consulting&#xA;Create date:  April 12, 2018&#xA;Last modified: May 29, 2018&#xA;&#xA;******/&#xA;Use [Prod_Network_Forecasting] &#xA; GO&#xA;&#xA;/*----------Create temporary table---------------------*/&#xA;CREATE  TABLE [BPF].[SyndicationActualsTemp] &#xA;(  [Date]                                                                               Date NULL&#xA;  ,[FraudTypeStatusName]           varchar(100) NULL&#xA;  ,[PublisherOwnerName]                             varchar(100) NULL&#xA;  ,[PublisherCategory]                    varchar(50) NULL&#xA;  ,[MarketplaceClassification] varchar(50) NULL&#xA;  ,[PublisherName]                                          varchar(100) NULL&#xA;  ,[AdDemandSource]                                     varchar(50) NULL&#xA;  ,[BusinessModel]                                          varchar(50) NULL&#xA;  ,[MarketName]                                                              varchar(50) NULL&#xA;  ,[DeviceType]                                                  varchar(50) NULL&#xA;  ,[Revenue]                                                       float NULL&#xA;  ,[Volume]                                                                         bigint NULL&#xA;  ,[Impressions]                                 bigint NULL&#xA;  ,[Clicks]                                                                              bigint NULL&#xA;  ,[BiddedVolume]                                           bigint NULL&#xA;  ,[PreDiscountRevenue(USD)] float NULL) ON [FACT_Daily_Actuals_Syndication ];&#xA;&#xA;&#xA; /*--------Transform output from cube and insert into temp table---------------*/&#xA;&#xA;INSERT INTO [BPF].[SyndicationActualsTemp]  &#xA;  &#xA;SELECT   a.[Date]&#xA;                                ,a.[FraudTypeStatusName]                                                                          AS [FraudTypeStatusName]&#xA;                                ,a.[PublisherOwnerName]                                                                           AS [PublisherOwnerName]&#xA;                                ,CASE WHEN a.[PublisherOwnerName]='Yahoo' AND a.[MarketplaceClassification] LIKE 'O&amp;O%' THEN 'O&amp;O' &#xA;                                 ELSE a.[PublisherCategory]  END                                              AS [PublisherCategory]&#xA;                                ,a.[MarketplaceClassification]                                                    AS [MarketplaceClassification]&#xA;                                ,a.[PublisherName]                                                                                                         AS [PublisherName]&#xA;                                ,a.[AdDemandSource]                                                                                   AS [AdDemandSource]  &#xA;                                ,a.[BusinessModel]                                                                                                         AS [BusinessModel]&#xA;                                ,a.[Country]                                                       AS MarketName&#xA;                                ,a.[Device]                                                                                                          AS [DeviceType]&#xA;                                ,a.[GrossRevenue(CD)]                                                                                  AS Revenue&#xA;                                ,a.[SearchResultPageViews]                                                        AS Volume&#xA;                                ,a.[Impressions]                                                                                                AS [Impressions]&#xA;                                ,a.[Clicks]                                                                                                                                             AS [Clicks]&#xA;                                ,a.[BiddedSearchResultPageViews]                          AS [BiddedVolume]&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;,a.[PreDiscountRevenue(USD)]   AS [PreDiscountRevenue(USD)]&#xA;                                FROM [Prod_Network_Forecasting].[STG].[FACT_Daily_Actuals_Syndication] AS a&#xA;                   WHERE a.[PublisherOwnerName] IN ('Microsoft', 'Unspecified', 'Yahoo')&#xA;                                                &#xA;                                                &#xA;                                                 &#xA;                                                &#xA; &#xA;/*---------Stack all the metrics and insert into reporting table----------------------*/&#xA;&#xA;INSERT INTO [STG].[FACT_Daily_Actuals_SyndicationPivot]   &#xA;&#xA;SELECT  [Date]   &#xA;                   ,'SDS Syndication Cube' AS [DataSource]&#xA;                   ,[FraudTypeStatusName]                                                          &#xA;                   ,[PublisherOwnerName]            &#xA;                  ,[PublisherCategory]   &#xA;                   ,[MarketplaceClassification]    &#xA;                   ,[PublisherName]                         &#xA;                   ,[AdDemandSource]                                    &#xA;                   ,[BusinessModel]                                         &#xA;                   ,[MarketName]                                                             &#xA;                   ,[DeviceType]                 &#xA;                   ,'Actual' AS [MetricType]           &#xA;                   ,'Revenue' AS [MetricName]    &#xA;                   ,[Revenue] AS MetricValue&#xA;FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]&#xA;UNION ALL&#xA;SELECT  [Date]   &#xA;                   ,'SDS Syndication Cube' AS [DataSource]                            &#xA;                   ,[FraudTypeStatusName]                                                                                          &#xA;                   ,[PublisherOwnerName]            &#xA;                  ,[PublisherCategory]                   &#xA;                   ,[MarketplaceClassification]&#xA;                   ,[PublisherName]                         &#xA;                   ,[AdDemandSource]                                    &#xA;                   ,[BusinessModel]                                         &#xA;                   ,[MarketName]                                                             &#xA;                   ,[DeviceType]                 &#xA;                   ,'Actual' AS [MetricType]           &#xA;                   ,'Volume' AS [MetricName]      &#xA;                   ,[Volume] AS MetricValue&#xA;FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]&#xA;                                &#xA;UNION ALL&#xA;SELECT  [Date]                   &#xA;                   ,'SDS Syndication Cube' AS [DataSource]&#xA;                   ,[FraudTypeStatusName]                                                                                          &#xA;                   ,[PublisherOwnerName]            &#xA;                  ,[PublisherCategory]   &#xA;                   ,[MarketplaceClassification]    &#xA;                   ,[PublisherName]                         &#xA;                   ,[AdDemandSource]                                    &#xA;                   ,[BusinessModel]                                         &#xA;                   ,[MarketName]                                                             &#xA;                   ,[DeviceType]                 &#xA;                   ,'Actual' AS [MetricType]           &#xA;                   ,'Impressions' AS [MetricName]             &#xA;                   ,[Impressions] AS MetricValue &#xA;FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]&#xA;                   UNION ALL&#xA;SELECT  [Date]                                                   &#xA;                   ,'SDS Syndication Cube' AS [DataSource]            &#xA;                   ,[FraudTypeStatusName]                          &#xA;                   ,[PublisherOwnerName]            &#xA;                  ,[PublisherCategory]                   &#xA;                   ,[MarketplaceClassification]&#xA;                   ,[PublisherName]                         &#xA;                   ,[AdDemandSource]                                    &#xA;                   ,[BusinessModel]                                         &#xA;                   ,[MarketName]                                                             &#xA;                   ,[DeviceType]                 &#xA;                   ,'Actual' AS [MetricType]           &#xA;                   ,'Clicks' AS [MetricName]          &#xA;                   ,[Clicks] AS MetricValue                             &#xA;FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]&#xA;UNION ALL&#xA;SELECT  [Date]                                   &#xA;                   ,'SDS Syndication Cube' AS [DataSource]&#xA;                   ,[FraudTypeStatusName]                                                          &#xA;                   ,[PublisherOwnerName]            &#xA;                  ,[PublisherCategory]                   &#xA;                   ,[MarketplaceClassification]&#xA;                   ,[PublisherName]                         &#xA;                   ,[AdDemandSource]                                    &#xA;                   ,[BusinessModel]                                         &#xA;                   ,[MarketName]                                                             &#xA;                   ,[DeviceType]                 &#xA;                   ,'Actual' AS [MetricType]           &#xA;                   ,'Bidded Volume' AS [MetricName]      &#xA;                   ,[BiddedVolume] AS MetricValue          &#xA;FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]&#xA;UNION ALL&#xA;SELECT  [Date]                                   &#xA;                   ,'SDS Syndication Cube' AS [DataSource]&#xA;                   ,[FraudTypeStatusName]                                                          &#xA;                   ,[PublisherOwnerName]            &#xA;                  ,[PublisherCategory]                   &#xA;                   ,[MarketplaceClassification]&#xA;                   ,[PublisherName]                         &#xA;                   ,[AdDemandSource]                                    &#xA;                   ,[BusinessModel]                                         &#xA;                   ,[MarketName]                                                             &#xA;                   ,[DeviceType]                 &#xA;                   ,'Actual' AS [MetricType]           &#xA;                   ,'PreDiscountRevenue(USD)' AS [MetricName]      &#xA;                   ,[PreDiscountRevenue(USD)] AS MetricValue          &#xA;FROM [Prod_Network_Forecasting].[BPF].[SyndicationActualsTemp]&#xA;&#xA;;&#xA;&#xA;&#xA;DROP TABLE [BPF].[SyndicationActualsTemp] ;&#xA;---END&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Load StartDate"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{099A821E-7DAB-4C70-AAFC-7277492AC43F}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Load StartDate"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2014; © 2014 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{7C8B82CC-ED17-4152-B32A-47B59C1BC4AE}"
+          SQLTask:SqlStatementSource="&#xA;&#xA;select CONCAT(cast(cast(cast(max([ReportingDateKey]) as varchar(8)) as date) as varchar(10)),'T00:00:00') as maxdate,CONCAT(cast(dateadd(Day,-14,cast(cast(max([ReportingDateKey]) as varchar(8)) as date)) as varchar(10)),'T00:00:00') as startdate from [PUB].[FACT_SyndicationPerformance_Daily_Global]&#xA;&#xA;&#xA;&#xA;"
+          SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="0"
+            SQLTask:DtsVariableName="User::EndDate" />
+          <SQLTask:ResultBinding
+            SQLTask:ResultName="1"
+            SQLTask:DtsVariableName="User::StartDate" />
+        </SQLTask:SqlTaskData>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Load_STG_Daily_Actuals_Syndication"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:Description="Data Flow Task"
+      DTS:DTSID="{AE2F9D06-F159-4AA5-8A78-C1B4CD7E7F84}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Load_STG_Daily_Actuals_Syndication"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          version="1">
+          <components>
+            <component
+              refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination"
+              componentClassID="Microsoft.OLEDBDestination"
+              contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+              description="OLE DB Destination"
+              name="OLE DB Destination"
+              usesDispositions="true"
+              version="4">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[STG].[FACT_Daily_Actuals_Syndication]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepIdentity">false</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                  name="FastLoadKeepNulls">false</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                  name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                  name="FastLoadMaxInsertCommitSize">2147483647</property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[172.16.132.45.Prod_Network_Forecasting]"
+                  connectionManagerRefId="Package.ConnectionManagers[172.16.132.45.Prod_Network_Forecasting]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input]"
+                  errorOrTruncationOperation="Insert"
+                  errorRowDisposition="FailComponent"
+                  hasSideEffects="true"
+                  name="OLE DB Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Date].[Date].[Date].[MEMBER_CAPTION]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Date].[Date].[Date].[MEMBER_CAPTION]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Date]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Date].[Date].[Date].[MEMBER_CAPTION]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FraudTypeStatusName]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PublisherOwnerName]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PublisherCategory]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[AdDemandSource]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PublisherName]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Geography].[Country].[Country].[MEMBER_CAPTION]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Geography].[Country].[Country].[MEMBER_CAPTION]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Country]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Geography].[Country].[Country].[MEMBER_CAPTION]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Device].[Device].[Device].[MEMBER_CAPTION]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Device].[Device].[Device].[MEMBER_CAPTION]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Device]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Device].[Device].[Device].[MEMBER_CAPTION]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MarketplaceClassification]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Measures].[Gross Revenue (CD)]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Measures].[Gross Revenue (CD)]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[GrossRevenue(CD)]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Gross Revenue (CD)]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Measures].[Search Result Page Views]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Measures].[Search Result Page Views]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[SearchResultPageViews]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Search Result Page Views]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Measures].[Impressions]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Measures].[Impressions]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Impressions]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Impressions]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Measures].[Clicks]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Measures].[Clicks]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Clicks]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Clicks]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Measures].[Bidded Search Result Page Views]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Measures].[Bidded Search Result Page Views]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BiddedSearchResultPageViews]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Bidded Search Result Page Views]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BusinessModel]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]]" />
+                    <inputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[[Measures].[Pre Discount Revenue (USD)]]"
+                      cachedDataType="wstr"
+                      cachedLength="255"
+                      cachedName="[Measures].[Pre Discount Revenue (USD)]"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PreDiscountRevenue(USD)]"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Pre Discount Revenue (USD)]]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Date]"
+                      dataType="dbDate"
+                      name="Date" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[FraudTypeStatusName]"
+                      dataType="wstr"
+                      length="255"
+                      name="FraudTypeStatusName" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PublisherOwnerName]"
+                      dataType="wstr"
+                      length="250"
+                      name="PublisherOwnerName" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PublisherCategory]"
+                      dataType="wstr"
+                      length="250"
+                      name="PublisherCategory" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[AdDemandSource]"
+                      dataType="wstr"
+                      length="250"
+                      name="AdDemandSource" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PublisherName]"
+                      dataType="wstr"
+                      length="250"
+                      name="PublisherName" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BusinessModel]"
+                      dataType="wstr"
+                      length="250"
+                      name="BusinessModel" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Country]"
+                      dataType="wstr"
+                      length="250"
+                      name="Country" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Device]"
+                      dataType="wstr"
+                      length="250"
+                      name="Device" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[MarketplaceClassification]"
+                      dataType="wstr"
+                      length="250"
+                      name="MarketplaceClassification" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[GrossRevenue(CD)]"
+                      dataType="r8"
+                      name="GrossRevenue(CD)" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[SearchResultPageViews]"
+                      dataType="i8"
+                      name="SearchResultPageViews" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Impressions]"
+                      dataType="i8"
+                      name="Impressions" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Clicks]"
+                      dataType="i8"
+                      name="Clicks" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[BiddedSearchResultPageViews]"
+                      dataType="i8"
+                      name="BiddedSearchResultPageViews" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PreDiscountRevenue(USD)]"
+                      dataType="r8"
+                      name="PreDiscountRevenue(USD)" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+              <outputs>
+                <output
+                  refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Outputs[OLE DB Destination Error Output]"
+                  exclusionGroup="1"
+                  isErrorOut="true"
+                  name="OLE DB Destination Error Output"
+                  synchronousInputId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input]">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+            <component
+              refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="OLE DB Source"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset"></property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable">User::Query</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">3</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[172.16.132.39\tabular.SyndicationPerformanceDailyGlobal]"
+                  connectionManagerRefId="Package.ConnectionManagers[172.16.132.39\tabular.SyndicationPerformanceDailyGlobal]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Clicks]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Clicks]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Clicks]]"
+                      name="[Measures].[Clicks]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Impressions]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Impressions]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Impressions]]"
+                      name="[Measures].[Impressions]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Gross Revenue (CD)]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Gross Revenue (CD)]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Gross Revenue (CD)]]"
+                      name="[Measures].[Gross Revenue (CD)]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Search Result Page Views]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Search Result Page Views]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Search Result Page Views]]"
+                      name="[Measures].[Search Result Page Views]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Bidded Search Result Page Views]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Bidded Search Result Page Views]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Bidded Search Result Page Views]]"
+                      name="[Measures].[Bidded Search Result Page Views]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Date].[Date].[Date].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Date].[Date].[Date].[MEMBER_CAPTION]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Date].[Date].[Date].[MEMBER_CAPTION]]"
+                      name="[Date].[Date].[Date].[MEMBER_CAPTION]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]]"
+                      name="[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]]"
+                      name="[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]]"
+                      name="[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]]"
+                      name="[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]]"
+                      name="[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]]"
+                      name="[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Device].[Device].[Device].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Device].[Device].[Device].[MEMBER_CAPTION]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Device].[Device].[Device].[MEMBER_CAPTION]]"
+                      name="[Device].[Device].[Device].[MEMBER_CAPTION]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]]"
+                      name="[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Geography].[Country].[Country].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Geography].[Country].[Country].[MEMBER_CAPTION]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Geography].[Country].[Country].[MEMBER_CAPTION]]"
+                      name="[Geography].[Country].[Country].[MEMBER_CAPTION]"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Pre Discount Revenue (USD)]]"
+                      dataType="wstr"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Pre Discount Revenue (USD)]]"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].Columns[[Measures].[Pre Discount Revenue (USD)]]"
+                      name="[Measures].[Pre Discount Revenue (USD)]"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Clicks]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Measures].[Clicks]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Impressions]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Measures].[Impressions]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Gross Revenue (CD)]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Measures].[Gross Revenue (CD)]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Search Result Page Views]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Measures].[Search Result Page Views]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Bidded Search Result Page Views]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Measures].[Bidded Search Result Page Views]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Date].[Date].[Date].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Date].[Date].[Date].[MEMBER_CAPTION]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Device].[Device].[Device].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Device].[Device].[Device].[MEMBER_CAPTION]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Geography].[Country].[Country].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Geography].[Country].[Country].[MEMBER_CAPTION]" />
+                    <externalMetadataColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output].ExternalColumns[[Measures].[Pre Discount Revenue (USD)]]"
+                      dataType="wstr"
+                      length="255"
+                      name="[Measures].[Pre Discount Revenue (USD)]" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Date].[Date].[Date].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Date].[Date].[Date].[MEMBER_CAPTION]]"
+                      name="[Date].[Date].[Date].[MEMBER_CAPTION]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]]"
+                      name="[Fraud Type Status].[Fraud Type Status Name].[Fraud Type Status Name].[MEMBER_CAPTION]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]]"
+                      name="[Publisher].[Publisher Owner Name].[Publisher Owner Name].[MEMBER_CAPTION]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]]"
+                      name="[Publisher].[Publisher Category].[Publisher Category].[MEMBER_CAPTION]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]]"
+                      name="[Publisher].[Publisher Name].[Publisher Name].[MEMBER_CAPTION]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]]"
+                      name="[Ad Demand Source].[Ad Demand Source].[Ad Demand Source].[MEMBER_CAPTION]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]]"
+                      name="[Ad Unit].[Financial Business Model].[Financial Business Model].[MEMBER_CAPTION]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Device].[Device].[Device].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Device].[Device].[Device].[MEMBER_CAPTION]]"
+                      name="[Device].[Device].[Device].[MEMBER_CAPTION]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]]"
+                      name="[Marketplace Classification].[Marketplace Classification].[Marketplace Classification].[MEMBER_CAPTION]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Geography].[Country].[Country].[MEMBER_CAPTION]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Geography].[Country].[Country].[MEMBER_CAPTION]]"
+                      name="[Geography].[Country].[Country].[MEMBER_CAPTION]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Clicks]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Clicks]]"
+                      name="[Measures].[Clicks]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Impressions]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Impressions]]"
+                      name="[Measures].[Impressions]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Gross Revenue (CD)]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Gross Revenue (CD)]]"
+                      name="[Measures].[Gross Revenue (CD)]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Search Result Page Views]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Search Result Page Views]]"
+                      name="[Measures].[Search Result Page Views]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Bidded Search Result Page Views]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Bidded Search Result Page Views]]"
+                      name="[Measures].[Bidded Search Result Page Views]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Pre Discount Revenue (USD)]]"
+                      dataType="wstr"
+                      length="255"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[[Measures].[Pre Discount Revenue (USD)]]"
+                      name="[Measures].[Pre Discount Revenue (USD)]" />
+                    <outputColumn
+                      refId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\Load_STG_Daily_Actuals_Syndication.Paths[OLE DB Source Output]"
+              endId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination.Inputs[OLE DB Destination Input]"
+              name="OLE DB Source Output"
+              startId="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source.Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Truncate STG tables"
+      DTS:CreationName="Microsoft.ExecuteSQLTask"
+      DTS:Description="Execute SQL Task"
+      DTS:DTSID="{8BBC1325-ED34-4B21-8146-22D71157F4E6}"
+      DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Truncate STG tables"
+      DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2014; © 2014 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+      DTS:ThreadHint="0">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <SQLTask:SqlTaskData
+          SQLTask:Connection="{96A8CA9F-0274-4D1D-83B0-B6347737CEB1}"
+          SQLTask:SqlStatementSource="truncate table [STG].[FACT_Daily_Actuals_Syndication]&#xA;go&#xA;truncate table [STG].[FACT_Daily_Actuals_SyndicationPivot]&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{181C33A0-773F-412D-B22D-F715BE7FF371}"
+      DTS:From="Package\Truncate STG tables"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Load StartDate" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 1]"
+      DTS:CreationName=""
+      DTS:DTSID="{1715D830-9226-46E9-AF96-AC6870FC95D7}"
+      DTS:From="Package\Load_STG_Daily_Actuals_Syndication"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 1"
+      DTS:To="Package\Execute SQL Task" />
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint 2]"
+      DTS:CreationName=""
+      DTS:DTSID="{43BEE13B-A096-4228-84EA-26946F8204AF}"
+      DTS:From="Package\Load StartDate"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint 2"
+      DTS:To="Package\Load_STG_Daily_Actuals_Syndication" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="sql12">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="163,42"
+          Id="Package\Execute SQL Task"
+          TopLeft="188,257" />
+        <NodeLayout
+          Size="149,42"
+          Id="Package\Load StartDate"
+          TopLeft="190,107" />
+        <NodeLayout
+          Size="255,42"
+          Id="Package\Load_STG_Daily_Actuals_Syndication"
+          TopLeft="144,179" />
+        <NodeLayout
+          Size="175,42"
+          Id="Package\Truncate STG tables"
+          TopLeft="138,21" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="225.5,63">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="39,44"
+              Start="0,0"
+              End="39,36.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,18" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,18"
+                    Point2="0,22"
+                    Point3="4,22" />
+                  <mssgle:LineSegment
+                    End="35,22" />
+                  <mssgle:CubicBezierSegment
+                    Point1="35,22"
+                    Point2="39,22"
+                    Point3="39,26" />
+                  <mssgle:LineSegment
+                    End="39,36.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 1]"
+          TopLeft="270.5,221">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,36"
+              Start="0,0"
+              End="0,28.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,28.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint 2]"
+          TopLeft="268,149">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,30"
+              Start="0,0"
+              End="0,22.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,22.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Load_STG_Daily_Actuals_Syndication">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="171,42"
+          Id="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination"
+          TopLeft="246,151" />
+        <NodeLayout
+          Size="150,42"
+          Id="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source"
+          TopLeft="199,63" />
+        <EdgeLayout
+          Id="Package\Load_STG_Daily_Actuals_Syndication.Paths[OLE DB Source Output]"
+          TopLeft="274,105">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="57.5,46"
+              Start="0,0"
+              End="57.5,38.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,19"
+                    Point2="0,23"
+                    Point3="4,23" />
+                  <mssgle:LineSegment
+                    End="53.5,23" />
+                  <mssgle:CubicBezierSegment
+                    Point1="53.5,23"
+                    Point2="57.5,23"
+                    Point3="57.5,27" />
+                  <mssgle:LineSegment
+                    End="57.5,38.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
+    design-time-name="Package\Load_STG_Daily_Actuals_Syndication\OLE DB Source">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
